@@ -33,22 +33,23 @@ if (isset($_SESSION['useremail']) && isset($_POST['roomname']) && isset($_POST['
                 $newFilePath = "../../roomimages/" . $last_id . '/' . $_FILES['roomimages']['name'][$i];
                 //Upload the file into the temp dir
                 if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                    echo json_encode(array('success' => true));
                 } else {
                     $roomsqlstmt = $conn->prepare("DELETE FROM `advertisement` WHERE `adid` = ?");
                     $roomsqlstmt->bind_param("i", $last_id);
                     $roomsqlstmt->execute();
-                    echo json_encode(array('success' => false, "desc" => 'Images upload error, changes reverted'));
+                    echo json_encode(array("success" => false, "desc" => 'Images upload error, changes reverted'));
                     die();
                 }
             }
         }
+        
+        echo json_encode(array("success"=>true));
     } catch (\Throwable $th) {
         $roomsqlstmt = $conn->prepare("DELETE FROM `advertisement` WHERE `adid` = ?");
         $roomsqlstmt->bind_param("i", $last_id);
         $roomsqlstmt->execute();
-        echo json_encode(array('success' => false, "desc" => 'Images upload error, changes reverted'));
+        echo json_encode(array("success"=>false, "desc" => 'Images upload error, changes reverted'));
     }
 } else {
-    echo json_encode(array('success' => false, "desc" => 'No Post DATA'));
+    echo json_encode(array("success"=>false, "desc" => 'No Post DATA'));
 }

@@ -103,6 +103,17 @@ include('../config.php');
                 </ul>
             </div>
         </div>
+        <!-- TOAST -->
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x">
+            <br><br><br>
+            <div id="liveToast" class="toast align-items-center" style="background-color: #d1b5ff;" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="alertmsg">
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
         <div class="b-example-divider b-example-vr"></div>
         <div id="pagecontent" style="width: 100%; overflow: hidden;">
             <div class="spinner-border m-5" role="status">

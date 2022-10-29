@@ -1,3 +1,10 @@
+function alertmessage(msgtext) {
+    document.getElementById("alertmsg").innerHTML = msgtext;
+    const toastLive = document.getElementById('liveToast')
+    const toast = new bootstrap.Toast(toastLive)
+    toast.show()
+}
+
 function navactivechange(idlink) {
     var elem = document.getElementsByClassName('nav-link');
     for (var i = 0; i < elem.length; i++) {
@@ -68,7 +75,13 @@ function addroom() {
         contentType: false,
         type: 'POST',
         success: function (data) {
-            alert(data);
+            var jsondata = JSON.parse(data);
+            if(jsondata["success"]){
+                $('#modaladdad').modal('hide');
+                alertmessage('Successfully add room (ad published)');
+            }else{
+                alertmessage('ERROR: ' + jsondata['desc']);
+            }
         }
     });
 
