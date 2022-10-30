@@ -45,3 +45,19 @@ body{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     transition: 0.3s;
 }
+
+.loginbox {
+    width: 500px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    height: 250px;
+}
+
+.regbox {
+    width: 500px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    height: 450px;
+}

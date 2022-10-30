@@ -42,6 +42,9 @@ include('config.php');
                     <li class="nav-item">
                         <a class="nav-link" href="advertiser">Publish Ad</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login">Login</a>
+                    </li>
                 </ul>
             </div>
         </div>
