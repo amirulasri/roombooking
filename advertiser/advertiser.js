@@ -122,7 +122,7 @@ function modifyroom() {
             const eachfile = roomimages[i];
             formData.append('roomimages[]', eachfile);
         }
-    }else{
+    } else {
         console.log(roomimages);
         formData.append('roomimages[]', '');
     }

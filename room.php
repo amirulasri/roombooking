@@ -25,6 +25,7 @@ if (isset($_GET['d'])) {
     <script src="jquery.js"></script>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="mainsection.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Room Booking</title>
 </head>
@@ -57,20 +58,51 @@ if (isset($_GET['d'])) {
     <div class="container-xl" style="max-width: 1600px;">
         <div class="row">
             <div class="col-6">
-                <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;">
+                <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
+                <div class="row">
+                    <?php
+                    $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
+                    for ($i = 2; $i < count($fileimages) + 2; $i++) {
+                    ?>
+                        <div class="col-sm-2">
+                            <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </div>
             </div>
             <div class="col-4">
                 <br>
                 <h3><?php echo $adname ?></h3><br>
                 <p><?php echo nl2br($addesc) ?></p>
                 <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
-                <button class="btn btn-primary btn-lg">Book Now</button>
+                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalloginrequest">Book Now</button>
             </div>
         </div>
     </div><br><br><br><br><br>
     <div class="roombookingfooter" style="position: absolute; bottom: 0;">
         <h5>Room Booking 2022 (&copy; Amirul Asri)</h5>
         <p>Only for education purpose</p>
+    </div>
+
+    <!-- Modal Log In request -->
+    <div class="modal fade" id="modalloginrequest" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">You are not logged in</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Please log in before proceed to the booking process. If you dont have an account, create new one!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Login</button>
+                    <button type="button" class="btn btn-primary">Create Account</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
