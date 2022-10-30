@@ -1,0 +1,37 @@
+body{
+    background-color: rgb(240, 240, 240);
+}
+
+.adfirstimage{
+    width: 200px;
+    height: 130px;
+    object-fit: cover;
+    margin-right: 20px;
+    border-radius: 10px;
+}
+
+.imgadasizetable {
+    width: 210px;
+}
+
+.catelogbox {
+    background-color: white;
+    padding: 5px;
+    border-radius: 8px;
+    height: 100%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.catelogbox:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transition: 0.3s;
+}
+
+.roombookingfooter {
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    height: 100px;
+    background-color: rgb(203, 217, 218);
+}

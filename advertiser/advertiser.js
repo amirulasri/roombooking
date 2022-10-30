@@ -38,6 +38,7 @@ function financialpage() {
 }
 
 function advertisementpage() {
+    document.getElementById("pagecontent").innerHTML = '<div class="spinner-border m-5" role="status"><span class="visually-hidden">Loading...</span></div>';
     var xmlhttp = new XMLHttpRequest();
     navactivechange('linkadvertise');
     xmlhttp.onreadystatechange = function () {
@@ -76,10 +77,69 @@ function addroom() {
         type: 'POST',
         success: function (data) {
             var jsondata = JSON.parse(data);
-            if(jsondata["success"]){
+            if (jsondata["success"]) {
                 $('#modaladdad').modal('hide');
                 alertmessage('Successfully add room (ad published)');
-            }else{
+                setTimeout(advertisementpage, 1000);
+            } else {
+                alertmessage('ERROR: ' + jsondata['desc']);
+            }
+        }
+    });
+
+    return false;
+}
+
+function loadmodaleditroom(roomid) {
+    document.getElementById("editroomform").innerHTML = '<div class="spinner-border m-5" role="status"><span class="visually-hidden">Loading...</span></div>';
+    var xmlhttp = new XMLHttpRequest();
+    navactivechange('linkadvertise');
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("editroomform").innerHTML = this.responseText;
+        }
+    };
+    xmlhttp.open("GET", "ajaxserver/modalmodifyroom.php?room=" + roomid, true);
+    xmlhttp.send();
+}
+
+function modifyroom() {
+    var roomname = document.getElementById("editroomname").value;
+    var roomdesc = document.getElementById("editroomdesc").value;
+    var roomlocation = document.getElementById("editroomlocation").value;
+    var roomprice = document.getElementById("editroomprice").value;
+    var pricetype = document.querySelector('input[name="editpricetype"]:checked').value;
+    var roomimages = document.getElementById("editroomimages").files;
+
+    const formData = new FormData();
+    formData.append('roomname', roomname);
+    formData.append('roomdesc', roomdesc);
+    formData.append('roomlocation', roomlocation);
+    formData.append('roomprice', roomprice);
+    formData.append('pricetype', pricetype);
+    if (roomimages.length > 0) {
+        for (let i = 0; i < roomimages.length; i++) {
+            const eachfile = roomimages[i];
+            formData.append('roomimages[]', eachfile);
+        }
+    }else{
+        console.log(roomimages);
+        formData.append('roomimages[]', '');
+    }
+
+    $.ajax({
+        url: 'ajaxserver/modifyroom.php',
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: 'POST',
+        success: function (data) {
+            var jsondata = JSON.parse(data);
+            if (jsondata["success"]) {
+                $('#modaleditad').modal('hide');
+                alertmessage('Successfully modify room (ad updated)');
+                setTimeout(advertisementpage, 1000);
+            } else {
                 alertmessage('ERROR: ' + jsondata['desc']);
             }
         }
