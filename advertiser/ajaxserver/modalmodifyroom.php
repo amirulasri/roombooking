@@ -1,8 +1,22 @@
 <?php
 include('../../config.php');
 session_start();
-$email = 'amirulasrix@gmail.com';
-$_SESSION['useremail'] = $email;
+if (isset($_SESSION['useremail'])) {
+    $useremail = $_SESSION['useremail'];
+    $userdatasql = $conn->prepare("SELECT `email`, `name`, `phoneno`, `joineddate` FROM `users` WHERE `email` = ?");
+    $userdatasql->bind_param("s", $useremail);
+    $userdatasql->execute();
+    $userdatasql->store_result();
+    if ($userdatasql->num_rows < 1) {
+        header('location: login');
+        die();
+    }
+    $userdatasql->bind_result($dbemail, $dbuserfname, $dbphoneno, $dbjoineddate);
+    $userdatasql->fetch();
+} else {
+    header('location: login');
+    die();
+}
 if (isset($_GET['room']) && isset($_SESSION['useremail'])) {
     $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype` FROM `advertisement` WHERE `users` = ? AND `adid` = ?");
     $roomsqlstmt->bind_param("si", $_SESSION['useremail'], $_GET['room']);

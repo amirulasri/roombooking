@@ -4,8 +4,22 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include('../../config.php');
 session_start();
-$email = 'amirulasrix@gmail.com';
-$_SESSION['useremail'] = $email;
+if (isset($_SESSION['useremail'])) {
+    $useremail = $_SESSION['useremail'];
+    $userdatasql = $conn->prepare("SELECT `email`, `name`, `phoneno`, `joineddate` FROM `users` WHERE `email` = ?");
+    $userdatasql->bind_param("s", $useremail);
+    $userdatasql->execute();
+    $userdatasql->store_result();
+    if ($userdatasql->num_rows < 1) {
+        header('location: login');
+        die();
+    }
+    $userdatasql->bind_result($dbemail, $dbuserfname, $dbphoneno, $dbjoineddate);
+    $userdatasql->fetch();
+} else {
+    header('location: login');
+    die();
+}
 
 function delete_files($target)
 {
@@ -23,7 +37,7 @@ function delete_files($target)
 }
 
 if (isset($_SESSION['useremail']) && isset($_SESSION['TEMPADID']) && isset($_POST['roomname']) && isset($_POST['roomdesc']) && isset($_POST['roomlocation']) && isset($_POST['roomprice']) && isset($_POST['pricetype'])) {
-    //PREPARE SQL FOR ADDING ROOM
+    //PREPARE SQL FOR MODIFY ROOM
     $roomsqlstmt = $conn->prepare("UPDATE `advertisement` SET `adname`=?,`addesc`=?,`adlocation`=?,`adprice`=?,`pricetype`=? WHERE `users`=? AND `adid`=?");
     $roomsqlstmt->bind_param("sssdssi", $_POST['roomname'], $_POST['roomdesc'], $_POST['roomlocation'], $_POST['roomprice'], $_POST['pricetype'], $_SESSION['useremail'], $_SESSION['TEMPADID']);
     $roomsqlstmt->execute();

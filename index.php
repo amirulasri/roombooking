@@ -1,5 +1,21 @@
 <?php
 include('config.php');
+session_start();
+if (isset($_SESSION['useremail'])) {
+    $useremail = $_SESSION['useremail'];
+    $userdatasql = $conn->prepare("SELECT `email`, `name`, `phoneno`, `joineddate` FROM `users` WHERE `email` = ?");
+    $userdatasql->bind_param("s", $useremail);
+    $userdatasql->execute();
+    $userdatasql->store_result();
+    if ($userdatasql->num_rows < 1) {
+        header('location: login');
+        die();
+    }
+    $userdatasql->bind_result($dbemail, $dbuserfname, $dbphoneno, $dbjoineddate);
+    $userdatasql->fetch();
+} else {
+    $useremail = "";
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,12 +55,20 @@ include('config.php');
                     <li class="nav-item">
                         <a class="nav-link" href="#lowerprice">Lower Price</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="advertiser">Publish Ad</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="login">Login</a>
-                    </li>
+                    <?php
+                    if ($useremail != "") {
+                        ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="advertiser">Publish Ad</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalprofile">My Profile</a>
+                        </li>
+                    <?php } else { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login">Login</a>
+                        </li>
+                    <?php } ?>
                 </ul>
             </div>
         </div>
@@ -167,6 +191,55 @@ include('config.php');
         <h5>Room Booking 2022 (&copy; Amirul Asri)</h5>
         <p>Only for education purpose</p>
     </div>
+
+    <?php
+    if ($useremail != "") {
+    ?>
+        <!-- Modal My Profile-->
+        <div class="modal fade" id="modalprofile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th colspan="2"><?php echo $dbuserfname ?></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-primary">
+                                <tr>
+                                    <td>Name</td>
+                                    <td><?php echo $dbuserfname ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td><?php echo $dbemail ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone no</td>
+                                    <td><?php echo $dbphoneno ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Joined Date</td>
+                                    <td><?php echo $dbjoineddate ?></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><button class="btn btn-danger" style="width: 100%;" onclick="window.location='logout'">Log out</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </body>
 
 </html>

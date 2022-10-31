@@ -147,3 +147,50 @@ function modifyroom() {
 
     return false;
 }
+
+function dataroomdashboard(roomid) {
+    document.getElementById("pagecontent").innerHTML = '<div class="spinner-border m-5" role="status"><span class="visually-hidden">Loading...</span></div>';
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("pagecontent").innerHTML = this.responseText;
+        }
+    };
+    xmlhttp.open("GET", "dataeachroom.php?room="+roomid, true);
+    xmlhttp.send();
+}
+
+function deleteroom(roomid) {
+    $.ajax({
+        url: 'ajaxserver/deleteroom.php?room='+roomid,
+        type: 'GET',
+        success: function (data) {
+            var jsondata = JSON.parse(data);
+            if (jsondata["success"]) {
+                alertmessage('Successfully delete room (ad removed)');
+                setTimeout(advertisementpage, 1000);
+            } else {
+                alertmessage('ERROR: ' + jsondata['desc']);
+            }
+        }
+    });
+}
+
+function searchroom() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("searchroomipt");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("roomtable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }       
+    }
+  }

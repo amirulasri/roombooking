@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include('config.php');
 session_start();
 if (isset($_SESSION['useremail'])) {
@@ -18,7 +21,7 @@ if (isset($_SESSION['useremail'])) {
 }
 
 if (isset($_GET['d'])) {
-    $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype`, `users` FROM `advertisement` WHERE `adid`= ?");
+    $roomsqlstmt = $conn->prepare("SELECT `advertisement`.`adname`, `advertisement`.`addesc`, `advertisement`.`adlocation`, `advertisement`.`adprice`, `advertisement`.`pricetype`, `advertisement`.`users`, `payment`.`payamount`, `payment`.`countdate`  FROM `advertisement` INNER JOIN `payment` ON `payment`.`adid` = `advertisement`.`adid` WHERE `payment`.`payid`= ?");
     $roomsqlstmt->bind_param("i", $_GET['d']);
     $roomsqlstmt->execute();
     $roomsqlstmt->store_result();
@@ -26,9 +29,9 @@ if (isset($_GET['d'])) {
         header('location: index');
         die();
     }
-    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
+    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users, $paymentamount, $paymentcountdate);
     $roomsqlstmt->fetch();
-    $firstFile = scandir("roomimages/" . $_GET['d'])[2];
+    $_SESSION['TEMPROOMIDBOOK'] = $_GET['d'];
 }
 ?>
 
@@ -72,29 +75,44 @@ if (isset($_GET['d'])) {
         </div>
     </nav>
     <br><br>
-    <div class="container-xl" style="max-width: 1600px;">
+    <div class="container-xl">
         <div class="row">
-            <div class="col-6">
-                <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
-                <div class="row">
-                    <?php
-                    $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
-                    for ($i = 2; $i < count($fileimages) + 2; $i++) {
-                    ?>
-                        <div class="col-sm-2">
-                            <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
-                        </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-            </div>
-            <div class="col-4">
-                <br>
-                <h3><?php echo $adname ?></h3><br>
-                <p><?php echo nl2br($addesc) ?></p>
-                <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
-                <button class="btn btn-primary btn-lg" <?php if($useremail != ""){echo 'onclick="window.location=\'book?d='.$_GET['d'].'\'"';} else {echo 'data-bs-toggle="modal" data-bs-target="#modalloginrequest"';} ?>>Book Now</button>
+            <div class="col-8">
+                <h3>Receipt for: <?php echo $adname ?></h3>
+                <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
+                <h4 id="totaldisplay">Total: RM <?php echo $adprice ?></h4>
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th colspan="2">RECEIPT ID: <?php $_GET['d'] ?></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-success">
+                        <tr>
+                            <td>Room/Hall</td>
+                            <td><?php echo $adname ?></td>
+                        </tr>
+                        <tr>
+                            <td>Price <?php echo $pricetype ?></td>
+                            <td>RM <?php echo $adprice ?></td>
+                        </tr>
+                        <tr>
+                            <?php
+                            if ($pricetype == 'permonth') {
+                            ?>
+                                <td>Number of month</td>
+                            <?php } else { ?>
+                                <td>Number of days</td>
+                            <?php } ?>
+                            <td><?php echo $paymentcountdate ?></td>
+                        </tr>
+                        <tr>
+                            <td>Total price</td>
+                            <td>RM <?php echo $paymentamount ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" onclick="window.print()">Print</button>
             </div>
         </div>
     </div><br><br><br><br><br>

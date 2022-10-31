@@ -29,6 +29,31 @@ if (isset($_GET['d'])) {
     $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
     $roomsqlstmt->fetch();
     $firstFile = scandir("roomimages/" . $_GET['d'])[2];
+    $_SESSION['TEMPROOMIDBOOK'] = $_GET['d'];
+}
+
+if(isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_SESSION['useremail'])){
+    $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype`, `users` FROM `advertisement` WHERE `adid`= ?");
+    $roomsqlstmt->bind_param("i", $_SESSION['TEMPROOMIDBOOK']);
+    $roomsqlstmt->execute();
+    $roomsqlstmt->store_result();
+    if ($roomsqlstmt->num_rows < 1) {
+        echo "<script>alert('Failed to book')</script>";
+        header('location: index');
+        die();
+    }
+    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
+    $roomsqlstmt->fetch();
+
+    $booksqlstmt = $conn->prepare("INSERT INTO `payment`(`payid`, `users`, `adid`, `payamount`, `countdate`) VALUES (NULL,?,?,?,?)");
+    $booksqlstmt->bind_param("sidi", $_SESSION['useremail'], $_SESSION['TEMPROOMIDBOOK'], $paymentamount, $_POST['countdate']);
+    $paymentamount = $adprice * $_POST['countdate'];
+    $result = $booksqlstmt->execute();
+    if($result) {
+        $last_id = $conn->insert_id;
+        echo "<script>alert('Successfully booked the room');</script>";
+        header('location: receipt?d='.$last_id);   
+    }
 }
 ?>
 
@@ -72,29 +97,42 @@ if (isset($_GET['d'])) {
         </div>
     </nav>
     <br><br>
-    <div class="container-xl" style="max-width: 1600px;">
+    <div class="container-xl">
         <div class="row">
-            <div class="col-6">
-                <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
-                <div class="row">
-                    <?php
-                    $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
-                    for ($i = 2; $i < count($fileimages) + 2; $i++) {
-                    ?>
-                        <div class="col-sm-2">
-                            <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
-                        </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-            </div>
             <div class="col-4">
-                <br>
-                <h3><?php echo $adname ?></h3><br>
-                <p><?php echo nl2br($addesc) ?></p>
-                <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
-                <button class="btn btn-primary btn-lg" <?php if($useremail != ""){echo 'onclick="window.location=\'book?d='.$_GET['d'].'\'"';} else {echo 'data-bs-toggle="modal" data-bs-target="#modalloginrequest"';} ?>>Book Now</button>
+                <h3>Book for: <?php echo $adname ?></h3>
+                <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
+                <h4 id="totaldisplay">Total: RM <?php echo $adprice ?></h4>
+                <form action="" class="formbook" method="POST">
+                    <div class="row">
+                        <?php
+                        if ($pricetype == 'permonth') {
+                        ?>
+                            <label for="" class="form-label">Choose number of month</label>
+                            <div class="col-4">
+                                <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                            </div>
+                        <?php } else { ?>
+                            <label for="" class="form-label">Choose number of day</label>
+                            <div class="col-4">
+                                <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                            </div>
+                        <?php } ?>
+                    </div>
+                    <label for="" class="form-label">Card number</label>
+                    <input type="text" class="form-control"><br>
+                    <div class="row">
+                        <div class="col">
+                            <label for="" class="form-label">Expiration date</label>
+                            <input type="text" class="form-control" placeholder="02/22">
+                        </div>
+                        <div class="col">
+                            <label for="" class="form-label">CCV</label>
+                            <input type="text" class="form-control" placeholder="">
+                        </div>
+                    </div><br>
+                    <button type="submit" class="btn btn-primary">Book</button>
+                </form>
             </div>
         </div>
     </div><br><br><br><br><br>
