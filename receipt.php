@@ -17,21 +17,24 @@ if (isset($_SESSION['useremail'])) {
     $userdatasql->bind_result($dbemail, $dbuserfname, $dbphoneno, $dbjoineddate);
     $userdatasql->fetch();
 } else {
-    $useremail = "";
+    header('location:index');
+    die();
 }
 
 if (isset($_GET['d'])) {
-    $roomsqlstmt = $conn->prepare("SELECT `advertisement`.`adname`, `advertisement`.`addesc`, `advertisement`.`adlocation`, `advertisement`.`adprice`, `advertisement`.`pricetype`, `advertisement`.`users`, `payment`.`payamount`, `payment`.`countdate`  FROM `advertisement` INNER JOIN `payment` ON `payment`.`adid` = `advertisement`.`adid` WHERE `payment`.`payid`= ?");
-    $roomsqlstmt->bind_param("i", $_GET['d']);
+    $roomsqlstmt = $conn->prepare("SELECT `advertisement`.`adname`, `advertisement`.`addesc`, `advertisement`.`adlocation`, `advertisement`.`adprice`, `advertisement`.`pricetype`, `advertisement`.`users`, `payment`.`payamount`, `payment`.`countdate`, `payment`.`bookdate`  FROM `advertisement` INNER JOIN `payment` ON `payment`.`adid` = `advertisement`.`adid` WHERE `payment`.`payid`= ? AND `payment`.`users` = ?");
+    $roomsqlstmt->bind_param("is", $_GET['d'], $useremail);
     $roomsqlstmt->execute();
     $roomsqlstmt->store_result();
     if ($roomsqlstmt->num_rows < 1) {
         header('location: index');
         die();
     }
-    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users, $paymentamount, $paymentcountdate);
+    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users, $paymentamount, $paymentcountdate, $paymentbookdate);
     $roomsqlstmt->fetch();
-    $_SESSION['TEMPROOMIDBOOK'] = $_GET['d'];
+}else{
+    header('location:index');
+    die();
 }
 ?>
 
@@ -67,9 +70,23 @@ if (isset($_GET['d'])) {
                     <li class="nav-item">
                         <a class="nav-link" href="index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="advertiser">Publish Ad</a>
-                    </li>
+                    <?php
+                    if ($useremail != "") {
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="advertiser">Publish Ad</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bookhistory">Book history</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalprofile">My Profile</a>
+                        </li>
+                    <?php } else { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login">Login</a>
+                        </li>
+                    <?php } ?>
                 </ul>
             </div>
         </div>
@@ -80,11 +97,11 @@ if (isset($_GET['d'])) {
             <div class="col-8">
                 <h3>Receipt for: <?php echo $adname ?></h3>
                 <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
-                <h4 id="totaldisplay">Total: RM <?php echo $adprice ?></h4>
+                <h4 id="totaldisplay">Total: RM <?php echo $paymentamount ?></h4>
                 <table class="table">
                     <thead class="table-dark">
                         <tr>
-                            <th colspan="2">RECEIPT ID: <?php $_GET['d'] ?></th>
+                            <th colspan="2">RECEIPT ID: <?php echo $_GET['d'] ?></th>
                         </tr>
                     </thead>
                     <tbody class="table-success">
@@ -110,9 +127,16 @@ if (isset($_GET['d'])) {
                             <td>Total price</td>
                             <td>RM <?php echo $paymentamount ?></td>
                         </tr>
+                        <tr>
+                            <td>Payment date</td>
+                            <td><?php echo $paymentbookdate ?></td>
+                        </tr>
                     </tbody>
                 </table>
-                <button class="btn btn-primary" onclick="window.print()">Print</button>
+                <div class="receiptbtn">
+                    <button class="btn btn-primary" onclick="window.print()">Print</button>
+                    <button class="btn btn-light" onclick="window.location='bookhistory'">View book history</button>
+                </div>
             </div>
         </div>
     </div><br><br><br><br><br>
@@ -139,6 +163,55 @@ if (isset($_GET['d'])) {
             </div>
         </div>
     </div>
+
+    <?php
+    if ($useremail != "") {
+    ?>
+        <!-- Modal My Profile-->
+        <div class="modal fade" id="modalprofile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th colspan="2"><?php echo $dbuserfname ?></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-primary">
+                                <tr>
+                                    <td>Name</td>
+                                    <td><?php echo $dbuserfname ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td><?php echo $dbemail ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone no</td>
+                                    <td><?php echo $dbphoneno ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Joined Date</td>
+                                    <td><?php echo $dbjoineddate ?></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><button class="btn btn-danger" style="width: 100%;" onclick="window.location='logout'">Log out</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </body>
 
 </html>

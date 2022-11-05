@@ -22,7 +22,7 @@
     }
     ?>
 
-    <h2 style="padding-left: 30px; padding-top: 30px;">Dashboard</h2>
+    <h2 style="padding-left: 30px; padding-top: 30px;">Financial</h2>
     <p style="padding-left: 30px;">View all booked room by users</p>
     <div class="row" style="padding-left: 30px; padding-top: 30px;">
         <div class="col-sm-8">

@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include('config.php');
 session_start();
 if (isset($_SESSION['useremail'])) {
@@ -14,22 +17,14 @@ if (isset($_SESSION['useremail'])) {
     $userdatasql->bind_result($dbemail, $dbuserfname, $dbphoneno, $dbjoineddate);
     $userdatasql->fetch();
 } else {
-    $useremail = "";
+    header('location:index');
+    die();
 }
 
-if (isset($_GET['d'])) {
-    $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype`, `users` FROM `advertisement` WHERE `adid`= ?");
-    $roomsqlstmt->bind_param("i", $_GET['d']);
-    $roomsqlstmt->execute();
-    $roomsqlstmt->store_result();
-    if ($roomsqlstmt->num_rows < 1) {
-        header('location: index');
-        die();
-    }
-    $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
-    $roomsqlstmt->fetch();
-    $firstFile = scandir("roomimages/" . $_GET['d'])[2];
-}
+$roomsqlstmt = $conn->prepare("SELECT `advertisement`.`adid`, `advertisement`.`adname`, `advertisement`.`addesc`, `advertisement`.`adlocation`, `advertisement`.`adprice`, `advertisement`.`pricetype`, `advertisement`.`users`, `payment`.`payid`, `payment`.`payamount`, `payment`.`countdate`  FROM `advertisement` INNER JOIN `payment` ON `payment`.`adid` = `advertisement`.`adid` WHERE `payment`.`users` = ?");
+$roomsqlstmt->bind_param("s", $useremail);
+$roomsqlstmt->execute();
+$roomresult = $roomsqlstmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -86,33 +81,42 @@ if (isset($_GET['d'])) {
         </div>
     </nav>
     <br><br>
-    <div class="container-xl" style="max-width: 1600px;">
+    <div class="container-xl">
         <div class="row">
-            <div class="col-6">
-                <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
-                <div class="row">
-                    <?php
-                    $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
-                    for ($i = 2; $i < count($fileimages) + 2; $i++) {
-                    ?>
-                        <div class="col-sm-2">
-                            <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
-                        </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-            </div>
-            <div class="col-4">
-                <br>
-                <h3><?php echo $adname ?></h3><br>
-                <p><?php echo nl2br($addesc) ?></p>
-                <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
-                <button class="btn btn-primary btn-lg" <?php if ($useremail != "") {
-                                                            echo 'onclick="window.location=\'book?d=' . $_GET['d'] . '\'"';
-                                                        } else {
-                                                            echo 'data-bs-toggle="modal" data-bs-target="#modalloginrequest"';
-                                                        } ?>>Book Now</button>
+            <div class="col-10">
+                <h2>Book history</h2>
+                <p>View all previous book receipt here!</p>
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th colspan="4">Book history (<?php echo $roomresult->num_rows ?>)</th>
+                        </tr>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Room</th>
+                            <th colspan="2">Total price</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-warning">
+                        <?php
+                        if ($roomresult->num_rows > 0) {
+                            while ($bookhistorydata = $roomresult->fetch_array()) {
+                        ?>
+                                <tr>
+                                    <td><?php echo $bookhistorydata[7] ?></td>
+                                    <td><?php echo $bookhistorydata[1] ?></td>
+                                    <td>RM <?php echo $bookhistorydata[8] ?></td>
+                                    <td><button class="btn btn-warning btn-sm" onclick="window.location='receipt?d=<?php echo $bookhistorydata[7] ?>'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+                                                <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z" />
+                                                <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
+                                            </svg>
+                                        </button></td>
+                                </tr>
+                        <?php }
+                        } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div><br><br><br><br><br>

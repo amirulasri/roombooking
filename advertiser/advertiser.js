@@ -13,19 +13,8 @@ function navactivechange(idlink) {
     document.getElementById(idlink).className += " active";
 }
 
-function dashboardpage() {
-    var xmlhttp = new XMLHttpRequest();
-    navactivechange('linkdashboard');
-    xmlhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("pagecontent").innerHTML = this.responseText;
-        }
-    };
-    xmlhttp.open("GET", "dashboard.php", true);
-    xmlhttp.send();
-}
-
 function financialpage() {
+    document.getElementById("pagecontent").innerHTML = '<div class="spinner-border m-5" role="status"><span class="visually-hidden">Loading...</span></div>';
     var xmlhttp = new XMLHttpRequest();
     navactivechange('linkfinancial');
     xmlhttp.onreadystatechange = function () {

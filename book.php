@@ -32,27 +32,25 @@ if (isset($_GET['d'])) {
     $_SESSION['TEMPROOMIDBOOK'] = $_GET['d'];
 }
 
-if(isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_SESSION['useremail'])){
+if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_SESSION['useremail'])) {
     $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype`, `users` FROM `advertisement` WHERE `adid`= ?");
     $roomsqlstmt->bind_param("i", $_SESSION['TEMPROOMIDBOOK']);
     $roomsqlstmt->execute();
     $roomsqlstmt->store_result();
     if ($roomsqlstmt->num_rows < 1) {
-        echo "<script>alert('Failed to book')</script>";
-        header('location: index');
+        echo "<script>alert('Failed to book');window.location='index'</script>";
         die();
     }
     $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
     $roomsqlstmt->fetch();
 
-    $booksqlstmt = $conn->prepare("INSERT INTO `payment`(`payid`, `users`, `adid`, `payamount`, `countdate`) VALUES (NULL,?,?,?,?)");
+    $booksqlstmt = $conn->prepare("INSERT INTO `payment`(`payid`, `users`, `adid`, `payamount`, `countdate`, `bookdate`) VALUES (NULL,?,?,?,?,NOW())");
     $booksqlstmt->bind_param("sidi", $_SESSION['useremail'], $_SESSION['TEMPROOMIDBOOK'], $paymentamount, $_POST['countdate']);
     $paymentamount = $adprice * $_POST['countdate'];
     $result = $booksqlstmt->execute();
-    if($result) {
+    if ($result) {
         $last_id = $conn->insert_id;
-        echo "<script>alert('Successfully booked the room');</script>";
-        header('location: receipt?d='.$last_id);   
+        echo "<script>window.location='receipt?d=$last_id'</script>";
     }
 }
 ?>
@@ -89,9 +87,23 @@ if(isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_S
                     <li class="nav-item">
                         <a class="nav-link" href="index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="advertiser">Publish Ad</a>
-                    </li>
+                    <?php
+                    if ($useremail != "") {
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="advertiser">Publish Ad</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="bookhistory">Book history</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalprofile">My Profile</a>
+                        </li>
+                    <?php } else { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login">Login</a>
+                        </li>
+                    <?php } ?>
                 </ul>
             </div>
         </div>
@@ -120,15 +132,15 @@ if(isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_S
                         <?php } ?>
                     </div>
                     <label for="" class="form-label">Card number</label>
-                    <input type="text" class="form-control"><br>
+                    <input type="text" class="form-control" required><br>
                     <div class="row">
                         <div class="col">
                             <label for="" class="form-label">Expiration date</label>
-                            <input type="text" class="form-control" placeholder="02/22">
+                            <input type="text" class="form-control" placeholder="02/22" required>
                         </div>
                         <div class="col">
                             <label for="" class="form-label">CCV</label>
-                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control" placeholder="" required>
                         </div>
                     </div><br>
                     <button type="submit" class="btn btn-primary">Book</button>
@@ -159,6 +171,55 @@ if(isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_S
             </div>
         </div>
     </div>
+
+    <?php
+    if ($useremail != "") {
+    ?>
+        <!-- Modal My Profile-->
+        <div class="modal fade" id="modalprofile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th colspan="2"><?php echo $dbuserfname ?></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-primary">
+                                <tr>
+                                    <td>Name</td>
+                                    <td><?php echo $dbuserfname ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td><?php echo $dbemail ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone no</td>
+                                    <td><?php echo $dbphoneno ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Joined Date</td>
+                                    <td><?php echo $dbjoineddate ?></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><button class="btn btn-danger" style="width: 100%;" onclick="window.location='logout'">Log out</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </body>
 
 </html>

@@ -62,6 +62,9 @@ if (isset($_SESSION['useremail'])) {
                             <a class="nav-link" href="advertiser">Publish Ad</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="bookhistory">Book history</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalprofile">My Profile</a>
                         </li>
                     <?php } else { ?>

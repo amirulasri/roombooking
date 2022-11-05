@@ -65,7 +65,7 @@ if (isset($_SESSION['useremail']) && isset($_SESSION['TEMPADID']) && isset($_POS
                 die();
             }
 
-            //CREATE DIRECTORY (UBUNTU ONLY)
+            //CREATE DIRECTORY
             if (!file_exists('../../roomimages')) {
                 mkdir('../../roomimages', 0777, true);
             }
