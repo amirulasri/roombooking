@@ -111,40 +111,42 @@ if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_
     <br><br>
     <div class="container-xl">
         <div class="row">
-            <div class="col-4">
-                <h3>Book for: <?php echo $adname ?></h3>
-                <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
-                <h4 id="totaldisplay">Total: RM <?php echo $adprice ?></h4>
-                <form action="" class="formbook" method="POST">
-                    <div class="row">
-                        <?php
-                        if ($pricetype == 'permonth') {
-                        ?>
-                            <label for="" class="form-label">Choose number of month</label>
-                            <div class="col-4">
-                                <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
-                            </div>
-                        <?php } else { ?>
-                            <label for="" class="form-label">Choose number of day</label>
-                            <div class="col-4">
-                                <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
-                            </div>
-                        <?php } ?>
-                    </div>
-                    <label for="" class="form-label">Card number</label>
-                    <input type="text" class="form-control" required><br>
-                    <div class="row">
-                        <div class="col">
-                            <label for="" class="form-label">Expiration date</label>
-                            <input type="text" class="form-control" placeholder="02/22" required>
+            <div class="col-6">
+                <div class="boxouter">
+                    <h3>Book for: <?php echo $adname ?></h3>
+                    <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
+                    <h4 id="totaldisplay">Total: RM <?php echo $adprice ?></h4>
+                    <form action="" class="formbook" method="POST">
+                        <div class="row">
+                            <?php
+                            if ($pricetype == 'permonth') {
+                            ?>
+                                <label for="" class="form-label">Choose number of month</label>
+                                <div class="col-4">
+                                    <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                                </div>
+                            <?php } else { ?>
+                                <label for="" class="form-label">Choose number of day</label>
+                                <div class="col-4">
+                                    <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                                </div>
+                            <?php } ?>
                         </div>
-                        <div class="col">
-                            <label for="" class="form-label">CCV</label>
-                            <input type="text" class="form-control" placeholder="" required>
-                        </div>
-                    </div><br>
-                    <button type="submit" class="btn btn-primary">Book</button>
-                </form>
+                        <label for="" class="form-label">Card number</label>
+                        <input type="text" class="form-control" required><br>
+                        <div class="row">
+                            <div class="col">
+                                <label for="" class="form-label">Expiration date</label>
+                                <input type="text" class="form-control" placeholder="02/22" required>
+                            </div>
+                            <div class="col">
+                                <label for="" class="form-label">CCV</label>
+                                <input type="text" class="form-control" placeholder="" required>
+                            </div>
+                        </div><br>
+                        <button type="submit" class="btn btn-primary">Book</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div><br><br><br><br><br>

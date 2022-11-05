@@ -87,32 +87,34 @@ if (isset($_GET['d'])) {
     </nav>
     <br><br>
     <div class="container-xl" style="max-width: 1600px;">
-        <div class="row">
-            <div class="col-6">
-                <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
-                <div class="row">
-                    <?php
-                    $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
-                    for ($i = 2; $i < count($fileimages) + 2; $i++) {
-                    ?>
-                        <div class="col-sm-2">
-                            <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
-                        </div>
-                    <?php
-                    }
-                    ?>
+        <div>
+            <div class="row">
+                <div class="col-6">
+                    <img id="roommainimage" src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $firstFile ?>" class="d-block w-100" alt="<?php echo $adname ?> Image" style="height: 400px; object-fit: cover; border-radius: 9px;"><br>
+                    <div class="row">
+                        <?php
+                        $fileimages = array_diff(scandir("roomimages/" . $_GET['d']), array('.', '..'));
+                        for ($i = 2; $i < count($fileimages) + 2; $i++) {
+                        ?>
+                            <div class="col-sm-2">
+                                <img src="roomimages/<?php echo $_GET['d'] ?>/<?php echo $fileimages[$i] ?>" class="d-block w-100 smallimagesroom" alt="<?php echo $data[1] ?> Image" style="height: 80px; width: 30px; object-fit: cover; border-radius: 9px;" onclick="changeroomimage('<?php echo $_GET['d'] . '/' . $fileimages[$i] ?>')">
+                            </div>
+                        <?php
+                        }
+                        ?>
+                    </div>
                 </div>
-            </div>
-            <div class="col-4">
-                <br>
-                <h3><?php echo $adname ?></h3><br>
-                <p><?php echo nl2br($addesc) ?></p>
-                <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
-                <button class="btn btn-primary btn-lg" <?php if ($useremail != "") {
-                                                            echo 'onclick="window.location=\'book?d=' . $_GET['d'] . '\'"';
-                                                        } else {
-                                                            echo 'data-bs-toggle="modal" data-bs-target="#modalloginrequest"';
-                                                        } ?>>Book Now</button>
+                <div class="col-4">
+                    <br>
+                    <h3><?php echo $adname ?></h3><br>
+                    <p><?php echo nl2br($addesc) ?></p>
+                    <h5>RM <?php echo $adprice ?> <?php echo $pricetype ?></h5><br>
+                    <button class="btn btn-primary btn-lg" <?php if ($useremail != "") {
+                                                                echo 'onclick="window.location=\'book?d=' . $_GET['d'] . '\'"';
+                                                            } else {
+                                                                echo 'data-bs-toggle="modal" data-bs-target="#modalloginrequest"';
+                                                            } ?>>Book Now</button>
+                </div>
             </div>
         </div>
     </div><br><br><br><br><br>

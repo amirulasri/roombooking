@@ -94,48 +94,50 @@ if (isset($_GET['d'])) {
     <br><br>
     <div class="container-xl">
         <div class="row">
-            <div class="col-8">
-                <h3>Receipt for: <?php echo $adname ?></h3>
-                <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
-                <h4 id="totaldisplay">Total: RM <?php echo $paymentamount ?></h4>
-                <table class="table">
-                    <thead class="table-dark">
-                        <tr>
-                            <th colspan="2">RECEIPT ID: <?php echo $_GET['d'] ?></th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-success">
-                        <tr>
-                            <td>Room/Hall</td>
-                            <td><?php echo $adname ?></td>
-                        </tr>
-                        <tr>
-                            <td>Price <?php echo $pricetype ?></td>
-                            <td>RM <?php echo $adprice ?></td>
-                        </tr>
-                        <tr>
-                            <?php
-                            if ($pricetype == 'permonth') {
-                            ?>
-                                <td>Number of month</td>
-                            <?php } else { ?>
-                                <td>Number of days</td>
-                            <?php } ?>
-                            <td><?php echo $paymentcountdate ?></td>
-                        </tr>
-                        <tr>
-                            <td>Total price</td>
-                            <td>RM <?php echo $paymentamount ?></td>
-                        </tr>
-                        <tr>
-                            <td>Payment date</td>
-                            <td><?php echo $paymentbookdate ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="receiptbtn">
-                    <button class="btn btn-primary" onclick="window.print()">Print</button>
-                    <button class="btn btn-light" onclick="window.location='bookhistory'">View book history</button>
+            <div class="col-10">
+                <div class="boxouter">
+                    <h3>Receipt for: <?php echo $adname ?></h3>
+                    <h6>RM <?php echo $adprice . ' ' . $pricetype ?></h6><br>
+                    <h4 id="totaldisplay">Total: RM <?php echo $paymentamount ?></h4>
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th colspan="2">RECEIPT ID: <?php echo $_GET['d'] ?></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-success">
+                            <tr>
+                                <td>Room/Hall</td>
+                                <td><?php echo $adname ?></td>
+                            </tr>
+                            <tr>
+                                <td>Price <?php echo $pricetype ?></td>
+                                <td>RM <?php echo $adprice ?></td>
+                            </tr>
+                            <tr>
+                                <?php
+                                if ($pricetype == 'permonth') {
+                                ?>
+                                    <td>Number of month</td>
+                                <?php } else { ?>
+                                    <td>Number of days</td>
+                                <?php } ?>
+                                <td><?php echo $paymentcountdate ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total price</td>
+                                <td>RM <?php echo $paymentamount ?></td>
+                            </tr>
+                            <tr>
+                                <td>Payment date</td>
+                                <td><?php echo $paymentbookdate ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="receiptbtn">
+                        <button class="btn btn-primary" onclick="window.print()">Print</button>
+                        <button class="btn btn-light" onclick="window.location='bookhistory'">View book history</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
-body{
+body {
     background-color: rgb(240, 240, 240);
 }
 
-.adfirstimage{
+.adfirstimage {
     width: 200px;
     height: 130px;
     object-fit: cover;
@@ -52,6 +52,7 @@ body{
     padding: 10px;
     border-radius: 10px;
     height: 250px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .regbox {
@@ -60,10 +61,18 @@ body{
     padding: 10px;
     border-radius: 10px;
     height: 450px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.boxouter{
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 @media print {
-    .receiptbtn{
+    .receiptbtn {
         display: none;
     }
- }
+}
