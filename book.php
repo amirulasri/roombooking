@@ -123,12 +123,12 @@ if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_
                             ?>
                                 <label for="" class="form-label">Choose number of month</label>
                                 <div class="col-4">
-                                    <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                                    <input type="number" name="countdate" min="1" id="countdate" value="1" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control" required><br>
                                 </div>
                             <?php } else { ?>
                                 <label for="" class="form-label">Choose number of day</label>
                                 <div class="col-4">
-                                    <input type="number" name="countdate" min="1" id="countdate" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control"><br>
+                                    <input type="number" name="countdate" min="1" id="countdate" value="1" onchange="calcprice(<?php echo $adprice ?>)" oninput="calcprice(<?php echo $adprice ?>)" class="form-control" required><br>
                                 </div>
                             <?php } ?>
                         </div>
