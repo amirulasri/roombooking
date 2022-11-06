@@ -32,14 +32,15 @@ if(isset($_POST['fullname']) && isset($_POST['phoneno']) && isset($_POST['email'
         <div class="regbox">
             <form action="" method="POST">
                 <label for="" class="form-label">Full Name</label>
-                <input type="text" name="fullname" class="form-control"><br>
+                <input type="text" name="fullname" class="form-control" required><br>
                 <label for="" class="form-label">Phone number</label>
-                <input type="text" name="phoneno" class="form-control"><br>
+                <input type="text" name="phoneno" class="form-control" required><br>
                 <label for="" class="form-label">Email</label>
-                <input type="text" name="email" class="form-control"><br>
+                <input type="text" name="email" class="form-control" required><br>
                 <label for="" class="form-label">Password</label>
-                <input type="password" name="userpassword" class="form-control"><br>
-                <button class="btn btn-primary" style="float: right;" type="submit">Login</button>
+                <input type="password" name="userpassword" class="form-control" required><br>
+                <button class="btn btn-primary" style="float: right; margin-left: 5px;" type="submit">Sign Up</button>
+                <button class="btn btn-secondary" style="float: right;" type="button" onclick="window.location='login'">Login</button>
             </form>
         </div>
     </div>

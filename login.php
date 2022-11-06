@@ -38,11 +38,11 @@ if(isset($_POST['email']) && isset($_POST['userpassword'])){
         <div class="loginbox">
             <form action="" method="POST">
                 <label for="" class="form-label">Email</label>
-                <input type="text" name="email" class="form-control"><br>
+                <input type="text" name="email" class="form-control" required><br>
                 <label for="" class="form-label">Password</label>
-                <input type="password" name="userpassword" class="form-control"><br>
+                <input type="password" name="userpassword" class="form-control" required><br>
                 <button type="submit" class="btn btn-primary" style="float: right;">Login</button>
-                <button type="button" class="btn btn-primary" style="float: right; margin-right: 5px;" onclick="window.location='signup'">Sign Up</button>
+                <button type="button" class="btn btn-secondary" style="float: right; margin-right: 5px;" onclick="window.location='signup'">Sign Up</button>
             </form>
         </div>
     </div>
