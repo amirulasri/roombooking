@@ -1,7 +1,4 @@
     <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
     include('../config.php');
     session_start();
     if (isset($_SESSION['useremail'])) {
@@ -40,10 +37,10 @@
                     $adresult = $adsqlstmt->get_result();
                     if ($adresult->num_rows > 0) {
                         while ($addata = $adresult->fetch_array()) {
-                            $firstFile = scandir("../roomimages/".$addata[0])[2];
+                            $firstFile = scandir("../roomimages/" . $addata[0])[2];
                     ?>
                             <tr>
-                                <td class="imgadasizetable"><img class="adfirstimage" src="../roomimages/<?php echo $addata[0].'/'.$firstFile ?>" alt=""></td>
+                                <td class="imgadasizetable"><img class="adfirstimage" src="../roomimages/<?php echo $addata[0] . '/' . $firstFile ?>" alt=""></td>
                                 <td><?php echo $addata[1] ?></td>
                                 <td><?php echo nl2br($addata[2]) ?></td>
                                 <td>
