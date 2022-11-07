@@ -141,7 +141,7 @@ if (isset($_GET['d'])) {
     </div><br><br><br><br><br>
     <div class="roombookingfooter" style="position: absolute; bottom: 0;">
         <h5>Room Booking 2022 (&copy; Amirul Asri)</h5>
-        <p>Only for education purpose</p>
+        <p>Easiest platform for booking a rooms and halls</p>
     </div>
 
     <!-- Modal Log In request -->

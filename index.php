@@ -192,7 +192,7 @@ if (isset($_SESSION['useremail'])) {
     </div><br><br><br><br><br>
     <div class="roombookingfooter">
         <h5>Room Booking 2022 (&copy; Amirul Asri)</h5>
-        <p>Only for education purpose</p>
+        <p>Easiest platform for booking a rooms and halls</p>
     </div>
 
     <?php

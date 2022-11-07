@@ -1,5 +1,6 @@
 <?php
 include('config.php');
+require 'vendor/autoload.php';
 session_start();
 if (isset($_SESSION['useremail'])) {
     $useremail = $_SESSION['useremail'];
@@ -32,6 +33,9 @@ if (isset($_GET['d'])) {
     $_SESSION['TEMPROOMIDBOOK'] = $_GET['d'];
 }
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_SESSION['useremail'])) {
     $roomsqlstmt = $conn->prepare("SELECT `adname`, `addesc`, `adlocation`, `adprice`, `pricetype`, `users` FROM `advertisement` WHERE `adid`= ?");
     $roomsqlstmt->bind_param("i", $_SESSION['TEMPROOMIDBOOK']);
@@ -44,13 +48,43 @@ if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_
     $roomsqlstmt->bind_result($adname, $addesc, $adlocation, $adprice, $pricetype, $users);
     $roomsqlstmt->fetch();
 
+    if($pricetype == 'perday'){
+        $typedisplay = 'days';
+    }else{
+        $typedisplay = 'months';
+    }
+
     $booksqlstmt = $conn->prepare("INSERT INTO `payment`(`payid`, `users`, `adid`, `payamount`, `countdate`, `bookdate`) VALUES (NULL,?,?,?,?,NOW())");
     $booksqlstmt->bind_param("sidi", $_SESSION['useremail'], $_SESSION['TEMPROOMIDBOOK'], $paymentamount, $_POST['countdate']);
     $paymentamount = $adprice * $_POST['countdate'];
     $result = $booksqlstmt->execute();
     if ($result) {
         $last_id = $conn->insert_id;
-        echo "<script>window.location='receipt?d=$last_id'</script>";
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = "smtp.gmail.com";
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'amirulasrixserver@gmail.com';
+            $mail->Password   = $phpmailerpass;
+            $mail->SMTPSecure = "tls";
+            $mail->Port       = 587;
+
+            //Recipients
+            $mail->setFrom('amirulasrixserver@gmail.com', 'Room Booking');
+            $mail->addAddress($_SESSION['useremail']);
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'Room Booking Successful';
+            $mail->Body    = 'Here is the receipt <br> <h2>Booked for room/hall: '.$adname.'<h2/> '.$addesc.' <br><br> <h3>Total payment: RM'.$paymentamount.'</h3>'.$_POST['countdate'].' '.$typedisplay.'';
+            $mail->AltBody = 'Here is the receipt Booked for room/hall: '.$adname.' '.$addesc.' Total payment: RM'.$paymentamount.' '.$_POST['countdate'].' '.$typedisplay.'';
+
+            $mail->send();
+            echo "<script>window.location='receipt?d=$last_id'</script>";
+        } catch (Exception $e) {
+            echo "<script>window.location='receipt?d=$last_id'</script>";
+        }
     }
 }
 ?>
@@ -152,7 +186,7 @@ if (isset($_POST['countdate']) && isset($_SESSION['TEMPROOMIDBOOK']) && isset($_
     </div><br><br><br><br><br>
     <div class="roombookingfooter" style="position: absolute; bottom: 0;">
         <h5>Room Booking 2022 (&copy; Amirul Asri)</h5>
-        <p>Only for education purpose</p>
+        <p>Easiest platform for booking a rooms and halls</p>
     </div>
 
     <!-- Modal Log In request -->
